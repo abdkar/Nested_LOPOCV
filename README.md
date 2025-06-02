@@ -160,7 +160,9 @@ models:
     # - "Extra Trees"
 
 file_indices: [10] # The specific dataset index for filtered_df_10GBC.pkl
-7. Usage
+```
+
+## 7\. Usage
 To run the pipeline:
 
 Ensure your Conda environment is activated:
@@ -175,7 +177,7 @@ Bash
 python main.py
 The script will output progress to the console and log all experiments to your configured MLflow server.
 
-8. MLflow Integration
+## 8\. MLflow Integration
 Experiment Tracking: All runs are logged under the experiment name specified in config.yaml.
 Run Hierarchy:
 A parent MLflow run is created for each data_idx (e.g., idx_10_processing).
