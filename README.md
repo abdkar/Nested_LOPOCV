@@ -41,7 +41,7 @@ The study utilizes this pipeline to evaluate ten different classifiers across va
 
 ## 3\. Project Structure
 
-
+```
 Nested_GPT/
 ├── main.py                     # Main entry point to run the pipeline
 ├── config/
@@ -56,6 +56,7 @@ Nested_GPT/
 │   └── utils.py                # Utility functions (e.g., saving temporary CSVs)
 ├── requirements.txt            # (Recommended) Python dependencies
 └── README.md                   # This file
+```
 
 ## 4\. Prerequisites
 
@@ -250,6 +251,6 @@ Once the associated journal paper is published, please add citation details here
 
 ---
 
-*This README is a template. Please review and customize it to accurately reflect all specifics of your project, including paths, exact library versions if critical, and any custom logic or features you've implemented.*
+
 
 
