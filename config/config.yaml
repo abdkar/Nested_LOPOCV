@@ -1,0 +1,36 @@
+experiment:
+  name: SH_full_CV_efficiency_v3_3_GPU # Or your preferred name from monolithic
+  tracking_uri: http://localhost:5000
+
+paths:
+  data_dir: /home/amir/SH_Wrok_Data/SH AI timenormalized export/KNN_data/Tsfresh/Process_72_stats/ # Or your specific data dir
+  result_dir: /home/amir/SH_Wrok_Data/SH AI timenormalized export/KNN_data/Tsfresh/Process_72_stats/single_GBC_2311/P3_10TGmN_3/results/ # Or your specific result_dir matching monolithic structure
+
+scaling:
+  scaler: StandardScaler # Or as per monolithic SCALER_NAME
+
+# NEW: Add these for parity with monolithic script's job control
+job_control:
+  # N_JOBS for parallel processing of indices by joblib in main.py
+  # Set to 1 for initial debugging, then increase if needed (monolithic used N_JOBS=1)
+  outer_n_jobs: 1
+  # INTERNAL_N_JOBS for GridSearchCV, cross_val_score, and some model's n_jobs
+  # Monolithic used 4
+  internal_n_jobs: 4
+
+# NEW: Add for GPU control (optional, but needed for parity if monolithic used GPU)
+hardware:
+  #use_gpu_xgb: True  # Set to False to disable GPU for XGBoost
+  #use_gpu_lgbm: True # Set to False to disable GPU for LightGBM
+  
+  use_gpu_xgb: false  # Set to false to use CPU for XGBoost
+  use_gpu_lgbm: false # Set to false to use CPU for LightGBM
+
+models:
+  # If you want to use the "selected" feature, ensure your training.py passes it to build_models.
+  # For exact parity with monolithic (which runs all models from build_models),
+  # this section could be ignored or list all models.
+  #selected: ["Random Forest", "XGBoost", "KNN", "Logistic Regression", "AdaBoost", "LDA", "QDA", "Gradient Boosting Classifier", "Extra Trees", "LightGBM"] # List all if monolithic ran all
+  selected: ["Random Forest", "XGBoost"] # List all if monolithic ran all
+
+file_indices: [10] # Ensure these are integers

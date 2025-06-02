@@ -1,0 +1,14 @@
+# mlflow_pipeline/config/config.yaml
+experiment:
+  name: SH_LoPo_and_10Fold_v3_Efficiency
+  tracking_uri: http://localhost:5000
+
+paths:
+  data_dir: /home/amir/SH_Wrok_Data/SH AI timenormalized export/KNN_data/Tsfresh/Process_72_stats/
+  result_dir: /home/amir/SH_Wrok_Data/SH AI timenormalized export/KNN_data/Tsfresh/Process_72_stats/results/
+
+scaling:
+  scaler: StandardScaler  # [StandardScaler | MinMaxScaler | Normalizer]
+
+file_indices:            # Indices of filtered_df_<idx><MODEL_ABBR>.pkl files
+  - 10GBC
