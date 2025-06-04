@@ -1,6 +1,5 @@
 
 Markdown
-
 # Subject-Aware Model Validation Pipeline for Repeated-Measures Data
 
 ## 1\. Overview
@@ -248,4 +247,6 @@ Besides MLflow, the pipeline also saves CSV files to the local filesystem in the
 Once the associated journal paper is published, please add citation details here.
 **Title:** "Subject-Aware Model Validation for Repeated-Measures Data: A Nested Approach for Trustworthy Medical AI Applications"
 **Authors:** Abdolamir Karbalaie, Farhad Abtahi *et al.* (adjust as per final publication)
-*(Consider adding a link to preprint or published paper when available)*
+
+
+---
