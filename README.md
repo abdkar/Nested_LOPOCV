@@ -160,7 +160,10 @@ models:
     # - "Extra Trees"
 
 file_indices: [10] # The specific dataset index for filtered_df_10GBC.pkl
-7. Usage
+
+```
+
+## 6\.  Usage
 To run the pipeline:
 
 Ensure your Conda environment is activated:
