@@ -342,10 +342,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **Documentation**: [docs/](docs/)
-- **Issues**: [GitHub Issues](https://github.com/your-repo/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-repo/discussions)
-- **Email**: your-email@institution.edu
+- **Documentation**: [docs/](https://github.com/abdkar/Nested_LOPOCV/blob/main/Guides_and_test/Documentation%20Summary.pdf)
+- **Issues**: [GitHub Issues](https://github.com/abdkar/Nested_LOPOCV/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/abdkar/Nested_LOPOCV/discussions)
+- **Email**: abdolamir.karbalaie@umu.se, farhad.abtahi@ki.se
 
 ## 🎯 Roadmap
 
