@@ -42,6 +42,7 @@ The study utilizes this pipeline to evaluate ten different classifiers across va
 
 ## 3\. Project Structure
 
+```
 Nested_GPT/
 ├── main.py                     # Main entry point to run the pipeline
 ├── config/
@@ -56,7 +57,7 @@ Nested_GPT/
 │   └── utils.py                # Utility functions (e.g., saving temporary CSVs)
 ├── requirements.txt            # (Recommended) Python dependencies
 └── README.md                   # This file
-
+```
 
 ## 4\. Prerequisites
 
@@ -160,86 +161,91 @@ models:
     # - "Extra Trees"
 
 file_indices: [10] # The specific dataset index for filtered_df_10GBC.pkl
-
 ```
 
-## 6\.  Usage
+## 7. Usage
+
 To run the pipeline:
 
-Ensure your Conda environment is activated:
-Bash
+1.  Ensure your Conda environment is activated:
+    ```bash
+    conda activate lopocv_env # Or your chosen environment name
+    ```
 
-conda activate your_env_name
-Navigate to the project root directory (Nested_GPT/).
-Verify that your config/config.yaml is correctly set up, especially the paths and file_indices.
-Run the main script:
-Bash
+2.  Navigate to the project root directory (e.g., `Nested_LOPOCV/`):
+    ```bash
+    cd path/to/your/Nested_LOPOCV
+    ```
 
-python main.py
+3.  Verify that your `config/config.yaml` is correctly set up, especially the `paths` and `file_indices`. Pay close attention to `data_dir` and `result_dir`.
+
+4.  Run the main script:
+    ```bash
+    python main.py
+    ```
+
 The script will output progress to the console and log all experiments to your configured MLflow server.
 
-8. MLflow Integration
-Experiment Tracking: All runs are logged under the experiment name specified in config.yaml.
-Run Hierarchy:
-A parent MLflow run is created for each data_idx (e.g., idx_10_processing).
-Nested child runs are created for each combination of (model, CV strategy, tuning mode) (e.g., XGBoost_LOPOCV_NestedCV_idx10).
-Logged Information per Child Run:
-Parameters: Hyperparameters (initial fixed ones or best found during tuning), scaler type, CV details, data index, model_name_for_plot.
-Metrics:
-Per-fold metrics: Test Accuracy, Training Accuracy, Group CV Validation Accuracy (inner loop score), F1, Precision, Recall, MCC.
-Aggregated metrics: overall_accuracy, overall_f1_score, etc., across all folds of the child run.
-Average fold metrics: avg_fold_test_accuracy, avg_fold_train_accuracy, etc.
-Efficiency metrics: avg_fold_train_time_s, avg_sample_infer_time_s, avg_fold_model_size_mb.
-Tags: model_name, outer_cv_strategy, tuning_mode, data_idx, scaler.
-Artifacts:
-Trained sklearn model (from the last successfully processed fold of the child run).
-Input example (sample of training data) for the model.
-CSV tables (logged to MLflow artifact store):
-tables/{run_name}_fold_details.csv: Detailed metrics for each fold of that specific child run.
-Logged Information per Parent Run (per data index):
-Parameters: data_idx, scaler, n_samples, n_features, n_participants, internal_n_jobs_config.
-Artifacts:
-dataset_info/dataset_summary_idx{idx}_...json: Summary statistics of the dataset for that index.
-performance_tables_idx{idx}_by_cv/{tag}/perf_{tag}_idx{idx}.csv: A wide table combining results from all models for a specific CV strategy and data index.
-efficiency_tables_idx_summary/computational_efficiency_idx{idx}.csv: Efficiency summary across all models and CVs for a data index.
-performance_tables_idx_summary/combined_performance_all_cv_idx{idx}.csv: A grand combined performance table for a data index across all CV strategies.
+## 8. MLflow Integration
+
+* **Experiment Tracking:** All runs are logged under the experiment name specified in `config.yaml`.
+* **Run Hierarchy:**
+    * A parent MLflow run is created for each `data_idx` (e.g., `idx_10_processing`).
+    * Nested child runs are created for each combination of (model, CV strategy, tuning mode) (e.g., `XGBoost_LOPOCV_NestedCV_idx10`).
+* **Logged Information per Child Run:**
+    * **Parameters:** Hyperparameters (initial fixed ones or best found during tuning), scaler type, CV details, data index, `model_name_for_plot` (if you added it).
+    * **Metrics:**
+        * Per-fold metrics: Test Accuracy, Training Accuracy, Group CV Validation Accuracy (inner loop score), F1, Precision, Recall, MCC.
+        * Aggregated metrics: `overall_accuracy`, `overall_f1_score`, etc., across all folds of the child run.
+        * Average fold metrics: `avg_fold_test_accuracy`, `avg_fold_train_accuracy`, etc.
+        * Efficiency metrics: `avg_fold_train_time_s`, `avg_sample_infer_time_s`, `avg_fold_model_size_mb`.
+    * **Tags:** `model_name`, `outer_cv_strategy`, `tuning_mode`, `data_idx`, `scaler`.
+    * **Artifacts:**
+        * Trained `sklearn` model (from the last successfully processed fold of the child run).
+        * Input example (sample of training data) for the model.
+        * CSV tables (logged to MLflow artifact store):
+            * `tables/{run_name}_fold_details.csv`
+* **Logged Information per Parent Run (per data index):**
+    * **Parameters:** `data_idx`, `scaler`, `n_samples`, `n_features`, `n_participants`, `internal_n_jobs_config`.
+    * **Artifacts:**
+        * `dataset_info/dataset_summary_idx{idx}_...json`
+        * `performance_tables_idx{idx}_by_cv/{tag}/perf_{tag}_idx{idx}.csv`
+        * `efficiency_tables_idx_summary/computational_efficiency_idx{idx}.csv`
+        * `performance_tables_idx_summary/combined_performance_all_cv_idx{idx}.csv`
+
 You can view, compare, and analyze these runs using the MLflow UI.
 
-9. Output
-Besides MLflow, the pipeline also saves CSV files to the local filesystem in the directory specified by result_dir in config.yaml. The structure typically mirrors the artifacts logged to MLflow for tables.
+## 9. Output
 
-{result_dir}/computational_efficiency_idx{idx}.csv
-{result_dir}/combined_performance_all_cv_idx{idx}.csv
-{result_dir}/{CV_STRATEGY_TAG}/perf_{CV_STRATEGY_TAG}_idx{idx}.csv (e.g., LOPOCV/perf_LOPOCV_idx10.csv)
-10. Troubleshooting Common Issues
-LightGBMError: GPU Tree Learner was not enabled... / XGBoost GPU issues:
-Ensure LightGBM/XGBoost are compiled with GPU support if use_gpu_lgbm: true or use_gpu_xgb: true in config.yaml.
-Alternatively, set these flags to false to use CPU, which is generally more straightforward to set up.
-ValueError: pyarrow.lib.IpcWriteOptions size changed...:
-This often indicates a PyArrow binary incompatibility. Try reinstalling: pip uninstall pyarrow -y && pip install pyarrow --no-cache-dir.
-NameError: name 'some_function' is not defined:
-Check for missing import statements at the top of the relevant Python file (e.g., from sklearn.metrics import accuracy_score in src/training.py).
-TypeError: function() missing X required positional arguments... or got an unexpected keyword argument:
-Ensure the function definition (parameters it accepts) and the function call (arguments being passed) match exactly.
-No artifacts for specific models (e.g., XGBoost, LightGBM):
-Check the console output carefully for messages like "No valid folds completed for {run_name}. Skipping...". If this appears, it means all cross-validation folds for that specific model configuration failed (e.g., due to errors during model training on very small/imbalanced data splits, or issues with GPU if enabled but not properly supported).
-To debug, add more print statements within the fold loop in src/training.py to see the data shapes (X_tr.shape, y_tr.shape) and any exceptions caught for the problematic models.
-ValueError: The truth value of a Series is ambiguous... in _mean function:
-Ensure the _mean function in src/training.py is correctly implemented to handle both Python lists and pandas Series as input (as per recent corrections).
-11. Citation (To be added)
+Besides MLflow, the pipeline also saves CSV files to the local filesystem in the directory specified by `result_dir` in `config.yaml`. The structure typically mirrors the artifacts logged to MLflow for tables.
+
+* **`{result_dir}/computational_efficiency_idx{idx}.csv`**
+* **`{result_dir}/combined_performance_all_cv_idx{idx}.csv`**
+* **`{result_dir}/{CV_STRATEGY_TAG}/perf_{CV_STRATEGY_TAG}_idx{idx}.csv`** (e.g., `LOPOCV/perf_LOPOCV_idx10.csv`)
+
+## 10. Troubleshooting Common Issues
+
+* **`LightGBMError: GPU Tree Learner was not enabled...` / XGBoost GPU issues:**
+    * Ensure LightGBM/XGBoost are compiled with GPU support if `use_gpu_lgbm: true` or `use_gpu_xgb: true` in `config.yaml`.
+    * Alternatively, set these flags to `false` to use CPU.
+* **`ValueError: pyarrow.lib.IpcWriteOptions size changed...`:**
+    * This often indicates a PyArrow binary incompatibility. Try reinstalling:
+        ```bash
+        pip uninstall pyarrow -y && pip install pyarrow --no-cache-dir
+        ```
+* **`NameError: name 'some_function' is not defined`:**
+    * Check for missing `import` statements at the top of the relevant Python file (e.g., `from sklearn.metrics import accuracy_score` in `src/training.py`).
+* **`TypeError: function() missing X required positional arguments...` or `got an unexpected keyword argument`:**
+    * Ensure the function definition (parameters it accepts) and the function call (arguments being passed) match exactly.
+* **No artifacts for specific models (e.g., XGBoost, LightGBM):**
+    * Check the console output carefully for messages like `"No valid folds completed for {run_name}. Skipping..."`. If this appears, it means all cross-validation folds for that specific model configuration failed.
+    * To debug, add more `print()` statements within the fold loop in `src/training.py` to see data shapes (e.g., `X_tr.shape`, `y_tr.shape`) and any exceptions caught for problematic models.
+* **`ValueError: The truth value of a Series is ambiguous...` in `_mean` function:**
+    * Ensure the `_mean` function in `src/training.py` is correctly implemented to handle both Python `list`s and pandas `Series` as input.
+
+## 11. Citation (To be added)
+
 Once the associated journal paper is published, please add citation details here.
-Title: "Subject-Aware Model Validation for Repeated-Measures Data: A Nested Approach for Trustworthy Medical AI Applications"
-Authors: Abdolamir Karbalaie, et al. (adjust as per final publication)
-
-This README is a template. Please review and customize it to accurately reflect all specifics of your project, including paths, exact library versions if critical, and any custom logic or features you've implemented.
-
-</immersive>
-
-**How to save it as `README.md`:**
-
-1.  **Copy the Text:** Click the "Copy to Clipboard" button that appears when you hover over the Markdown block above, or manually select all the text within the triple backticks (```markdown ... ```).
-2.  **Create a New File:** In the root directory of your `Nested_GPT` project, create a new file.
-3.  **Name the File:** Name it exactly `README.md` (ensure the `.md` extension).
-4.  **Paste and Save:** Open the new `README.md` file in a text editor (like VS Code, Notepad++, TextEdit, etc.), paste the copied content, and save the file.
-
-Now you'll have a well-documented starting point for your project's README!
+**Title:** "Subject-Aware Model Validation for Repeated-Measures Data: A Nested Approach for Trustworthy Medical AI Applications"
+**Authors:** Abdolamir Karbalaie, Farhad Abtahi *et al.* (adjust as per final publication)
+*(Consider adding a link to preprint or published paper when available)*

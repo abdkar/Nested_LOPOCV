@@ -1,0 +1,70 @@
+# Configuration for Sepsis Detection in ICU Patients
+# Optimized for early sepsis detection using repeated measures
+
+experiment:
+  name: "ICU_Sepsis_Detection_Study_v1"
+  tracking_uri: "http://localhost:5000"
+
+paths:
+  data_dir: "./sepsis_data/"              # Directory containing sepsis datasets
+  result_dir: "./sepsis_results/"         # Directory for sepsis detection results
+
+scaling:
+  scaler: "StandardScaler"                # Critical for vital signs with different scales
+
+# Job control optimized for clinical data processing
+job_control:
+  outer_n_jobs: 1                         # Sequential for clinical data integrity
+  internal_n_jobs: 4                      # Parallel model training
+
+# Hardware settings
+hardware:
+  use_gpu_xgb: false                      # Set to true if CUDA available
+  use_gpu_lgbm: false                     # Set to true if CUDA available
+
+# Model selection optimized for clinical prediction
+models:
+  selected:
+    - "Random Forest"                     # Excellent for clinical data, interpretable
+    - "XGBoost"                          # High performance for structured data
+    - "Logistic Regression"              # Interpretable, clinical standard
+    - "LightGBM"                         # Fast, good performance
+    # Additional models for comparison:
+    # - "AdaBoost"                       # Ensemble method
+    # - "Gradient Boosting Classifier"   # Traditional boosting
+
+# Sepsis datasets (hourly measurements from ICU patients)
+file_indices: [10, 20, 30]               # Start with smaller datasets
+
+# Validation strategy thresholds (adjusted for clinical data)
+validation:
+  min_participants_lopo: 2                # Minimum patients for LOPOCV
+  min_participants_group3: 3              # Minimum patients for Group 3-fold
+  min_samples_per_class: 10               # Minimum septic hours for 10-fold
+
+# Clinical-specific settings
+clinical:
+  # Focus on early detection (within 6 hours of sepsis onset)
+  early_detection_window: 6               # Hours before sepsis onset
+  
+  # Imbalanced data handling (sepsis is relatively rare)
+  handle_imbalance: true                  # Use class weighting
+  
+  # Missing data strategy (common in ICU due to equipment issues)
+  missing_data_strategy: "forward_fill"   # Realistic for continuous monitoring
+
+# Reproducibility (critical for clinical studies)
+random_state:
+  global_seed: 42
+  cv_seed: 42
+  model_seed: 42
+
+# Clinical performance metrics priorities
+metrics:
+  primary: "sensitivity"                  # Early detection is critical
+  secondary: ["specificity", "f1_score", "auc"] # Balance false alarms
+  
+# Feature importance analysis (for clinical interpretation)
+feature_analysis:
+  enable: true
+  top_features: 10                        # Most important clinical predictors
