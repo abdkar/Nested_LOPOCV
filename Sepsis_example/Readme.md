@@ -243,7 +243,7 @@ protocols = [
 For questions about this sepsis detection example:
 
 - **Clinical questions**: [Your clinical contact]
-- **Technical issues**: [GitHub Issues](https://github.com/your-repo/issues)
+- **Technical issues**: [GitHub Issues](https://github.com/abdkar/Nested_LOPOCV/issues)
 - **Implementation help**: [Your support email]
 - **Collaboration opportunities**: [Research contact]
 
