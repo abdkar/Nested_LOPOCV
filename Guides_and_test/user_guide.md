@@ -656,4 +656,4 @@ A: Ensure:
 2. All dependencies installed: `pip install -r requirements.txt`
 3. Python path includes project root: `export PYTHONPATH="${PYTHONPATH}:$(pwd)"`
 
-Need more help? Check our [GitHub Issues](https://github.com/your-repo/issues) or create a new issue with your specific problem!
+Need more help? Check our [GitHub Issues](https://github.com/abdkar/Nested_LOPOCV/issues) or create a new issue with your specific problem!
