@@ -246,17 +246,5 @@ Besides MLflow, the pipeline also saves CSV files to the local filesystem in the
 
 Once the associated journal paper is published, please add citation details here.
 Title: "Subject-Aware Model Validation for Repeated-Measures Data: A Nested Approach for Trustworthy Medical AI Applications"
-Authors: Abdolamir Karbalaie, et al. (adjust as per final publication)
+Authors: Abdolamir Karbalaie, Farhad Abtahi et al. (adjust as per final publication)
 
-This README is a template. Please review and customize it to accurately reflect all specifics of your project, including paths, exact library versions if critical, and any custom logic or features you've implemented.
-
-</immersive>
-
-**How to save it as `README.md`:**
-
-1.  **Copy the Text:** Click the "Copy to Clipboard" button that appears when you hover over the Markdown block above, or manually select all the text within the triple backticks (```markdown ... ```).
-2.  **Create a New File:** In the root directory of your `Nested_GPT` project, create a new file.
-3.  **Name the File:** Name it exactly `README.md` (ensure the `.md` extension).
-4.  **Paste and Save:** Open the new `README.md` file in a text editor (like VS Code, Notepad++, TextEdit, etc.), paste the copied content, and save the file.
-
-Now you'll have a well-documented starting point for your project's README!
