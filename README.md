@@ -248,5 +248,4 @@ Once the associated journal paper is published, please add citation details here
 **Title:** "Subject-Aware Model Validation for Repeated-Measures Data: A Nested Approach for Trustworthy Medical AI Applications"
 **Authors:** Abdolamir Karbalaie, Farhad Abtahi *et al.* (adjust as per final publication)
 
-
 ---
