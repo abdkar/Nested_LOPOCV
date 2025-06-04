@@ -1,250 +1,360 @@
-
-Markdown
 # Subject-Aware Model Validation Pipeline for Repeated-Measures Data
 
-## 1\. Overview
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![MLflow](https://img.shields.io/badge/MLflow-Tracking-orange.svg)](https://mlflow.org/)
 
-This project provides the codebase for the study titled: **"Subject-Aware Model Validation for Repeated-Measures Data: A Nested Approach for Trustworthy Medical AI Applications."**
+## 🎯 Overview
 
-The primary challenge addressed is the evaluation of machine learning (ML) models on repeated-measures data, common in clinical biomechanics and digital health. Such data often exhibit dependencies between trials from the same participant, which can lead to inflated performance estimates if standard cross-validation (CV) techniques are used due to data leakage.
+This pipeline addresses a critical challenge in **medical AI validation**: evaluating machine learning models on repeated-measures data without data leakage. Standard cross-validation techniques can lead to inflated performance estimates when multiple samples from the same participant appear in both training and test sets.
 
-This pipeline was developed to systematically compare four distinct validation strategies in the context of predicting fear of re-injury from a dataset of 623 movement trials from 72 individuals post-ACL reconstruction. The strategies evaluated are:
+### The Problem
+- **Data Leakage**: Traditional CV puts samples from same participant in train/test splits
+- **Inflated Performance**: Models learn participant-specific patterns, not generalizable features  
+- **Poor Generalization**: High validation scores don't translate to real-world performance
 
-  * Stratified 10-Fold CV
-  * Leave-One-Participant-Out CV (LOPOCV)
-  * Group 3-Fold CV
-  * A nested LOPOCV (outer loop) with Group 3-Fold CV (inner loop for hyperparameter tuning) framework.
+### Our Solution
+- **Subject-Aware Validation**: Ensures no participant appears in both training and test sets
+- **Multiple CV Strategies**: Compare standard vs. subject-aware approaches
+- **Comprehensive Evaluation**: Performance, overfitting, and computational efficiency metrics
+- **Reproducible Research**: Complete MLflow experiment tracking
 
-The study utilizes this pipeline to evaluate ten different classifiers across various metrics, including classification performance, the train-test gap, model ranking stability, and computational runtime. The findings aim to highlight the necessity of subject-aware evaluation methodologies for developing robust and trustworthy ML models in clinical and behavioral settings, thereby supporting transparent and reproducible evaluation standards in medical AI applications. This codebase facilitates such evaluations using MLflow for comprehensive experiment tracking.
+## 🚀 Quick Start
 
-## 2\. Features
+```bash
+# 1. Clone and setup
+git clone <repository-url>
+cd subject-aware-validation-pipeline
+conda create -n validation-env python=3.11 -y
+conda activate validation-env
 
-  * **Multiple Classifier Evaluation:** Supports training and evaluation of ten distinct classifiers relevant to the study.
-  * **Subject-Aware Cross-Validation Strategies:** Implements and compares:
-      * Standard Stratified 10-Fold CV.
-      * Leave-One-Participant-Out CV (LOPOCV) using `GroupKFold`.
-      * Group K-Fold CV (e.g., Group 3-Fold).
-  * **Nested Cross-Validation for Hyperparameter Tuning:** Features a nested LOPOCV (outer) + Group 3-Fold CV (inner) design using `GridSearchCV` for robust hyperparameter optimization and model generalization assessment.
-  * **Comprehensive MLflow Integration:**
-      * Logs experiment parameters: model configurations, CV strategy specifics, data scaling methods.
-      * Tracks detailed performance metrics: Accuracy, F1-score, Precision, Recall, MCC, Confusion Matrix per fold, aggregated overall metrics, and average fold metrics.
-      * Records **train-test gap** to assess model overfitting.
-      * Logs computational efficiency metrics: training time, inference time, and model size, facilitating runtime comparisons.
-      * Saves trained `sklearn` model artifacts and input examples.
-      * Organizes experiments with parent runs (per data index) and deeply nested child runs (per model/CV strategy/tuning mode) for clarity.
-  * **Configurable & Reproducible Pipeline:**
-      * Utilizes a `config.yaml` file for managing all critical experiment settings, paths, model selections, scaling choices, and hardware preferences (CPU/GPU).
-      * Designed to support transparent and reproducible evaluation standards.
-  * **Data Handling:** Includes functions for loading preprocessed data (from pickle files) and applying feature scaling.
-  * **Parallel Processing:** Leverages `joblib` for efficient parallel execution of experiments across different data indices (if applicable) or internal model fitting processes.
-  * **Structured Output Generation:** Produces detailed CSV files for performance and efficiency metrics, which are also logged as MLflow artifacts for easy access and further analysis (contributing to model ranking stability assessment).
+# 2. Install dependencies
+pip install -r requirements.txt
 
-## 3\. Project Structure
+# 3. Start MLflow server
+mlflow ui --host 0.0.0.0 --port 5000 &
 
-```
-Nested_GPT/
-├── main.py                     # Main entry point to run the pipeline
-├── config/
-│   └── config.yaml             # Configuration file for the pipeline
-├── src/
-│   ├── init.py             # Makes 'src' a package and exposes modules
-│   ├── data_loader.py          # Functions for loading and initial data prep
-│   ├── metrics.py              # Defines the metric_row function for performance calculation
-│   ├── mlflow_utils.py         # Utilities for MLflow setup
-│   ├── models.py               # Defines models and their hyperparameter grids
-│   ├── training.py             # Core training, CV, and MLflow logging logic
-│   └── utils.py                # Utility functions (e.g., saving temporary CSVs)
-├── requirements.txt            # (Recommended) Python dependencies
-└── README.md                   # This file
+# 4. Configure your paths
+cp config/config.yaml config/my_config.yaml
+# Edit paths in my_config.yaml
+
+# 5. Run pipeline
+python main.py
 ```
 
-## 4\. Prerequisites
+## 📊 Key Features
 
-  * Python (e.g., 3.9, 3.10, 3.11)
-  * Conda or a virtual environment manager (recommended)
-  * An MLflow tracking server running and accessible (if `tracking_uri` in `config.yaml` is not local file-based).
-  * Necessary system libraries for specific models (e.g., for GPU support if enabled for XGBoost/LightGBM).
+### 🔬 **Validation Strategies**
+- **Stratified 10-Fold CV**: Traditional approach (baseline)
+- **Leave-One-Participant-Out (LOPOCV)**: Ultimate subject-aware validation
+- **Group 3-Fold CV**: Balanced subject-aware approach
+- **Nested CV**: Proper hyperparameter tuning with subject-aware validation
 
-## 5\. Installation & Setup
+### 🤖 **Supported Models**
+- **Tree-based**: Random Forest, XGBoost, LightGBM, Extra Trees, Gradient Boosting
+- **Linear**: Logistic Regression, LDA, QDA
+- **Instance-based**: K-Nearest Neighbors
+- **Ensemble**: AdaBoost
 
-1.  **Clone the repository (if applicable):**
+### 📈 **Comprehensive Metrics**
+- **Performance**: Accuracy, F1, Precision, Recall, MCC
+- **Overfitting**: Train-test gap analysis
+- **Efficiency**: Training time, inference speed, model size
+- **Stability**: Cross-validation variance analysis
 
-    ```bash
-    git clone <your-repository-url>
-    cd Nested_GPT
-    ```
+### 🔧 **Advanced Features**
+- **GPU Support**: XGBoost and LightGBM GPU acceleration
+- **Parallel Processing**: Multi-core training and evaluation
+- **Experiment Tracking**: Complete MLflow integration
+- **Reproducibility**: Seeded random states and version tracking
 
-2.  **Create and activate a Conda environment (recommended):**
+## 📁 Project Structure
 
-    ```bash
-    conda create -n your_env_name python=3.11 -y  # Replace your_env_name
-    conda activate your_env_name
-    ```
+```
+subject-aware-validation-pipeline/
+├── 📄 main.py                    # Pipeline entry point
+├── 📁 config/
+│   └── 📄 config.yaml           # Configuration settings
+├── 📁 src/                      # Core modules
+│   ├── 📄 __init__.py
+│   ├── 📄 data_loader.py        # Data loading and preprocessing
+│   ├── 📄 models.py             # Model definitions and grids
+│   ├── 📄 training.py           # Training and validation logic
+│   ├── 📄 metrics.py            # Performance calculations
+│   ├── 📄 mlflow_utils.py       # Experiment tracking
+│   └── 📄 utils.py              # Utility functions
+├── 📁 docs/                     # Documentation
+├── 📁 tests/                    # Test suite
+├── 📄 requirements.txt          # Dependencies
+└── 📄 README.md                 # This file
+```
 
-3.  **Install dependencies:**
-    It's highly recommended to create and use a `requirements.txt` file based on your working environment.
-    If you have one:
+## 🛠️ Installation
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+### Prerequisites
+- **Python**: 3.9 or higher
+- **System Memory**: 8GB+ recommended for large datasets
+- **Storage**: 2GB+ for MLflow artifacts and results
 
-    If not, install the core libraries manually (example versions, adjust as needed):
+### Option 1: Conda (Recommended)
+```bash
+# Create isolated environment
+conda create -n validation-env python=3.11 -y
+conda activate validation-env
 
-    ```bash
-    pip install numpy pandas scikit-learn=="1.3.0" mlflow=="2.9.2" joblib pyyaml # Core
-    pip install xgboost lightgbm # Optional, install if used
-    pip install pyarrow --no-cache-dir # If you faced pyarrow issues
-    ```
+# Install core dependencies
+conda install numpy pandas scikit-learn=1.3.0 -y
+pip install mlflow==2.9.2 joblib pyyaml
 
-    *Note: For GPU support with XGBoost/LightGBM, you will need to install them following their specific GPU installation guides which may involve CUDA toolkit setup and specific compilation flags.*
+# Install optional GPU libraries
+pip install xgboost lightgbm  # CPU versions
+# For GPU: follow XGBoost/LightGBM GPU installation guides
+```
 
-4.  **Set up MLflow Tracking Server:**
-    Ensure your MLflow tracking server is running and accessible at the URI specified in `config/config.yaml` (e.g., `http://localhost:5000`). You can start a local server by running `mlflow ui` in a separate terminal from your Conda environment where MLflow is installed.
+### Option 2: Virtual Environment
+```bash
+python -m venv validation-env
+source validation-env/bin/activate  # Linux/Mac
+# validation-env\Scripts\activate    # Windows
 
-## 6\. Configuration
+pip install -r requirements.txt
+```
 
-The main configuration for the pipeline is done through the `config/config.yaml` file. Key sections include:
+### Option 3: Docker
+```bash
+docker build -t validation-pipeline .
+docker run -v $(pwd)/data:/app/data -v $(pwd)/results:/app/results validation-pipeline
+```
 
-  * **`experiment`**:
-      * `name`: Name of the MLflow experiment.
-      * `tracking_uri`: URI of the MLflow tracking server.
-  * **`paths`**:
-      * `data_dir`: Directory where input data (e.g., `filtered_df_{idx}GBC.pkl`) is located.
-      * `result_dir`: Directory where output CSV files will be saved locally.
-  * **`scaling`**:
-      * `scaler`: Type of scaler to use (e.g., `StandardScaler`, `MinMaxScaler`, `Normalizer`).
-  * **`job_control`**:
-      * `outer_n_jobs`: Number of parallel jobs for processing different data indices (used in `main.py`). Set to `1` for sequential processing of indices.
-      * `internal_n_jobs`: Number of parallel jobs for internal tasks like `GridSearchCV` and `cross_val_score` (used in `training.py`).
-  * **`hardware`**:
-      * `use_gpu_xgb`: `true` or `false` to enable/disable GPU for XGBoost. Requires XGBoost compiled with GPU support.
-      * `use_gpu_lgbm`: `true` or `false` to enable/disable GPU for LightGBM. Requires LightGBM compiled with GPU support.
-  * **`models`**:
-      * `selected`: (Optional) A list of model names (keys from `build_models` in `src/models.py`) to run. If omitted or `null`/empty, all models defined in `build_models` will be run.
-  * **`file_indices`**: A list of integers representing the data indices to process (e.g., `[10, 20]`). Each index typically corresponds to a specific preprocessed data file.
+## ⚙️ Configuration
 
-**Example `config.yaml` snippet:**
+### Basic Configuration
+Edit `config/config.yaml`:
 
 ```yaml
 experiment:
-  name: Subject_Aware_ACL_Validation_v1
-  tracking_uri: http://localhost:5000
+  name: "My_Validation_Study"
+  tracking_uri: "http://localhost:5000"
 
 paths:
-  data_dir: /path/to/your/data/ # e.g., /home/amir/datasets/acl_study/
-  result_dir: /path/to/your/results/ # e.g., /home/amir/outputs/acl_study_results/
-
-scaling:
-  scaler: StandardScaler
-
-job_control:
-  outer_n_jobs: 1
-  internal_n_jobs: 4 # Set based on your CPU cores
-
-hardware:
-  use_gpu_xgb: false # Set to true if XGBoost GPU version is installed
-  use_gpu_lgbm: false # Set to true if LightGBM GPU version is installed
+  data_dir: "/path/to/your/data/"
+  result_dir: "/path/to/results/"
 
 models:
-  selected: # Leave empty or remove to run all models from src/models.py
-    # - "Random Forest"
-    # - "XGBoost"
-    # - "LightGBM"
-    # - "KNN"
-    # - "Logistic Regression"
-    # - "AdaBoost"
-    # - "LDA"
-    # - "QDA"
-    # - "Gradient Boosting Classifier"
-    # - "Extra Trees"
-
-file_indices: [10] # The specific dataset index for filtered_df_10GBC.pkl
+  selected: ["Random Forest", "XGBoost", "Logistic Regression"]
+  
+file_indices: [10, 20, 30]  # Your data file indices
 ```
 
-## 7. Usage
+### Advanced Options
+```yaml
+job_control:
+  outer_n_jobs: 2        # Parallel data processing
+  internal_n_jobs: 4     # Model internal parallelization
 
-To run the pipeline:
+hardware:
+  use_gpu_xgb: true      # Enable XGBoost GPU
+  use_gpu_lgbm: true     # Enable LightGBM GPU
 
-1.  Ensure your Conda environment is activated:
-    ```bash
-    conda activate lopocv_env # Or your chosen environment name
-    ```
+validation:
+  min_participants_lopo: 2     # Minimum for LOPOCV
+  min_participants_group3: 3   # Minimum for Group 3-fold
+  min_samples_per_class: 10    # Minimum for 10-fold
+```
 
-2.  Navigate to the project root directory (e.g., `Nested_LOPOCV/`):
-    ```bash
-    cd path/to/your/Nested_LOPOCV
-    ```
+## 📈 Usage Examples
 
-3.  Verify that your `config/config.yaml` is correctly set up, especially the `paths` and `file_indices`. Pay close attention to `data_dir` and `result_dir`.
+### Basic Usage
+```python
+# Simple pipeline run
+python main.py
+```
 
-4.  Run the main script:
-    ```bash
-    python main.py
-    ```
+### Custom Configuration
+```python
+# Use specific config file
+python main.py --config config/my_custom_config.yaml
+```
 
-The script will output progress to the console and log all experiments to your configured MLflow server.
+### Programmatic Usage
+```python
+from src import parallel_run, setup_mlflow
 
-## 8. MLflow Integration
+# Setup experiment
+exp_id = setup_mlflow("My_Experiment", "http://localhost:5000")
 
-* **Experiment Tracking:** All runs are logged under the experiment name specified in `config.yaml`.
-* **Run Hierarchy:**
-    * A parent MLflow run is created for each `data_idx` (e.g., `idx_10_processing`).
-    * Nested child runs are created for each combination of (model, CV strategy, tuning mode) (e.g., `XGBoost_LOPOCV_NestedCV_idx10`).
-* **Logged Information per Child Run:**
-    * **Parameters:** Hyperparameters (initial fixed ones or best found during tuning), scaler type, CV details, data index, `model_name_for_plot` (if you added it).
-    * **Metrics:**
-        * Per-fold metrics: Test Accuracy, Training Accuracy, Group CV Validation Accuracy (inner loop score), F1, Precision, Recall, MCC.
-        * Aggregated metrics: `overall_accuracy`, `overall_f1_score`, etc., across all folds of the child run.
-        * Average fold metrics: `avg_fold_test_accuracy`, `avg_fold_train_accuracy`, etc.
-        * Efficiency metrics: `avg_fold_train_time_s`, `avg_sample_infer_time_s`, `avg_fold_model_size_mb`.
-    * **Tags:** `model_name`, `outer_cv_strategy`, `tuning_mode`, `data_idx`, `scaler`.
-    * **Artifacts:**
-        * Trained `sklearn` model (from the last successfully processed fold of the child run).
-        * Input example (sample of training data) for the model.
-        * CSV tables (logged to MLflow artifact store):
-            * `tables/{run_name}_fold_details.csv`
-* **Logged Information per Parent Run (per data index):**
-    * **Parameters:** `data_idx`, `scaler`, `n_samples`, `n_features`, `n_participants`, `internal_n_jobs_config`.
-    * **Artifacts:**
-        * `dataset_info/dataset_summary_idx{idx}_...json`
-        * `performance_tables_idx{idx}_by_cv/{tag}/perf_{tag}_idx{idx}.csv`
-        * `efficiency_tables_idx_summary/computational_efficiency_idx{idx}.csv`
-        * `performance_tables_idx_summary/combined_performance_all_cv_idx{idx}.csv`
+# Run validation
+parallel_run(
+    indices=[10, 20],
+    exp_id=exp_id,
+    data_dir="/path/to/data",
+    result_dir="/path/to/results",
+    scaler_name="StandardScaler"
+)
+```
 
-You can view, compare, and analyze these runs using the MLflow UI.
+## 📊 Understanding Results
 
-## 9. Output
+### MLflow UI Navigation
+1. **Experiments**: Each study gets its own experiment
+2. **Parent Runs**: One per data index (e.g., `idx_10_processing`)
+3. **Child Runs**: One per model/CV combination (e.g., `XGBoost_LOPOCV_NestedCV_idx10`)
 
-Besides MLflow, the pipeline also saves CSV files to the local filesystem in the directory specified by `result_dir` in `config.yaml`. The structure typically mirrors the artifacts logged to MLflow for tables.
+### Key Metrics to Monitor
+- **Overall Accuracy**: Performance across all folds
+- **Train-Test Gap**: Overfitting indicator
+- **CV Variance**: Model stability
+- **Computational Efficiency**: Resource usage
 
-* **`{result_dir}/computational_efficiency_idx{idx}.csv`**
-* **`{result_dir}/combined_performance_all_cv_idx{idx}.csv`**
-* **`{result_dir}/{CV_STRATEGY_TAG}/perf_{CV_STRATEGY_TAG}_idx{idx}.csv`** (e.g., `LOPOCV/perf_LOPOCV_idx10.csv`)
+### Output Files
+```
+results/
+├── computational_efficiency_idx10.csv     # Timing and resource usage
+├── combined_performance_idx10.csv         # All metrics combined
+└── LOPOCV/
+    └── perf_LOPOCV_idx10.csv             # LOPOCV-specific results
+```
 
-## 10. Troubleshooting Common Issues
+## 🔍 Data Requirements
 
-* **`LightGBMError: GPU Tree Learner was not enabled...` / XGBoost GPU issues:**
-    * Ensure LightGBM/XGBoost are compiled with GPU support if `use_gpu_lgbm: true` or `use_gpu_xgb: true` in `config.yaml`.
-    * Alternatively, set these flags to `false` to use CPU.
-* **`ValueError: pyarrow.lib.IpcWriteOptions size changed...`:**
-    * This often indicates a PyArrow binary incompatibility. Try reinstalling:
-        ```bash
-        pip uninstall pyarrow -y && pip install pyarrow --no-cache-dir
-        ```
-* **`NameError: name 'some_function' is not defined`:**
-    * Check for missing `import` statements at the top of the relevant Python file (e.g., `from sklearn.metrics import accuracy_score` in `src/training.py`).
-* **`TypeError: function() missing X required positional arguments...` or `got an unexpected keyword argument`:**
-    * Ensure the function definition (parameters it accepts) and the function call (arguments being passed) match exactly.
-* **No artifacts for specific models (e.g., XGBoost, LightGBM):**
-    * Check the console output carefully for messages like `"No valid folds completed for {run_name}. Skipping..."`. If this appears, it means all cross-validation folds for that specific model configuration failed.
-    * To debug, add more `print()` statements within the fold loop in `src/training.py` to see data shapes (e.g., `X_tr.shape`, `y_tr.shape`) and any exceptions caught for problematic models.
-* **`ValueError: The truth value of a Series is ambiguous...` in `_mean` function:**
-    * Ensure the `_mean` function in `src/training.py` is correctly implemented to handle both Python `list`s and pandas `Series` as input.
+### Input Format
+Your data should be pickle files named: `filtered_df_{index}.pkl` or `filtered_df_{index}GBC.pkl`
 
-## 11. Citation (To be added)
+### Required Columns
+- **Features**: Numerical columns for ML
+- **target**: Binary classification labels (0/1)
+- **Index**: Format `{participant_id}_{segment_order}` (e.g., `106_1`, `108_2`)
 
-Once the associated journal paper is published, please add citation details here.
-Title: "Subject-Aware Model Validation for Repeated-Measures Data: A Nested Approach for Trustworthy Medical AI Applications"
-Authors: Abdolamir Karbalaie, Farhad Abtahi et al. (adjust as per final publication)
+### Example Data Structure
+```python
+import pandas as pd
 
+# Your dataframe should look like:
+df = pd.DataFrame({
+    'feature_1': [1.2, 2.3, 3.4, ...],
+    'feature_2': [0.5, 1.6, 2.7, ...],
+    # ... more features
+    'target': [0, 1, 0, ...],  # Binary labels
+}, index=['106_1', '106_2', '108_1', '108_2', ...])  # participant_segment format
+```
+
+## 🚨 Troubleshooting
+
+### Common Issues
+
+#### MLflow Connection
+```bash
+# If MLflow server isn't accessible
+mlflow ui --host 0.0.0.0 --port 5000
+# Check firewall settings
+```
+
+#### GPU Issues
+```python
+# Disable GPU if causing problems
+hardware:
+  use_gpu_xgb: false
+  use_gpu_lgbm: false
+```
+
+#### Memory Issues
+```yaml
+# Reduce parallel jobs
+job_control:
+  outer_n_jobs: 1
+  internal_n_jobs: 2
+```
+
+#### Data Loading Errors
+```python
+# Check data file paths and format
+from src.data_loader import load_data
+df = load_data("your_file.pkl")
+print(df.head())
+print(df.columns)
+```
+
+### Error Messages and Solutions
+
+| Error | Solution |
+|-------|----------|
+| `FileNotFoundError: No such file` | Check `data_dir` path in config |
+| `ValueError: single class in training` | Ensure balanced target distribution |
+| `MLflow connection failed` | Start MLflow server: `mlflow ui` |
+| `GPU not available` | Set `use_gpu_*: false` in config |
+| `Insufficient participants` | Need ≥2 participants for LOPOCV |
+
+## 🧪 Testing
+
+Run the test suite to verify installation:
+
+```bash
+# Run all tests
+python -m pytest tests/ -v
+
+# Run specific test
+python -m pytest tests/test_pipeline.py::TestPipeline::test_build_models -v
+
+# Check test coverage
+pip install pytest-cov
+python -m pytest tests/ --cov=src --cov-report=html
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](docs/CONTRIBUTING.md) for details.
+
+### Development Setup
+```bash
+# Clone repository
+git clone <repository-url>
+cd subject-aware-validation-pipeline
+
+# Create development environment
+conda create -n validation-dev python=3.11 -y
+conda activate validation-dev
+
+# Install in development mode
+pip install -e .
+pip install -r requirements-dev.txt
+
+# Run pre-commit hooks
+pre-commit install
+```
+
+## 📚 Citation
+
+If you use this pipeline in your research, please cite:
+
+```bibtex
+@article{karbalaie2024subject,
+  title={Subject-Aware Model Validation for Repeated-Measures Data: A Nested Approach for Trustworthy Medical AI Applications},
+  author={Karbalaie, Abdolamir and Abtahi, Farhad and others},
+  journal={Journal Name},
+  year={2024},
+  note={Paper under review}
+}
+```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- **Documentation**: [docs/](docs/)
+- **Issues**: [GitHub Issues](https://github.com/your-repo/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/your-repo/discussions)
+- **Email**: your-email@institution.edu
+
+## 🎯 Roadmap
+
+- [ ] **v2.0**: Multi-class classification support
+- [ ] **v2.1**: Time-series specific validation strategies
+- [ ] **v2.2**: Automated hyperparameter optimization
+- [ ] **v2.3**: Real-time monitoring dashboard
+- [ ] **v3.0**: Deep learning model support
+
+---
+
+**Built with ❤️ for trustworthy medical AI research**
