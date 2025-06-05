@@ -44,25 +44,25 @@ python main.py
 
 ## 📊 Key Features
 
-### 🔬 **Validation Strategies**
+###  **Validation Strategies**
 - **Stratified 10-Fold CV**: Traditional approach (baseline)
 - **Leave-One-Participant-Out (LOPOCV)**: Ultimate subject-aware validation
 - **Group 3-Fold CV**: Balanced subject-aware approach
 - **Nested CV**: Proper hyperparameter tuning with subject-aware validation
 
-### 🤖 **Supported Models**
+###  **Supported Models**
 - **Tree-based**: Random Forest, XGBoost, LightGBM, Extra Trees, Gradient Boosting
 - **Linear**: Logistic Regression, LDA, QDA
 - **Instance-based**: K-Nearest Neighbors
 - **Ensemble**: AdaBoost
 
-### 📈 **Comprehensive Metrics**
+### **Comprehensive Metrics**
 - **Performance**: Accuracy, F1, Precision, Recall, MCC
 - **Overfitting**: Train-test gap analysis
 - **Efficiency**: Training time, inference speed, model size
 - **Stability**: Cross-validation variance analysis
 
-### 🔧 **Advanced Features**
+###  **Advanced Features**
 - **GPU Support**: XGBoost and LightGBM GPU acceleration
 - **Parallel Processing**: Multi-core training and evaluation
 - **Experiment Tracking**: Complete MLflow integration
