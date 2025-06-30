@@ -327,11 +327,11 @@ pre-commit install
 If you use this pipeline in your research, please cite:
 
 ```bibtex
-@article{karbalaie2024subject,
+@article{karbalaie2025subject,
   title={Subject-Aware Model Validation for Repeated-Measures Data: A Nested Approach for Trustworthy Medical AI Applications},
-  author={Karbalaie, Abdolamir and Abtahi, Farhad and others},
+  author={Karbalaie, Abdolamir, Abtahi, Farhad and Häger, Charlotte K. },
   journal={Journal Name},
-  year={2024},
+  year={2025},
   note={Paper under review}
 }
 ```
