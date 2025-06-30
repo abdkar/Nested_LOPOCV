@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![MLflow](https://img.shields.io/badge/MLflow-Tracking-orange.svg)](https://mlflow.org/)
 
-## 🎯 Overview
+##  Overview
 
 This pipeline addresses a critical challenge in **medical AI validation**: evaluating machine learning models on repeated-measures data without data leakage. Standard cross-validation techniques can lead to inflated performance estimates when multiple samples from the same participant appear in both training and test sets.
 
@@ -19,7 +19,7 @@ This pipeline addresses a critical challenge in **medical AI validation**: evalu
 - **Comprehensive Evaluation**: Performance, overfitting, and computational efficiency metrics
 - **Reproducible Research**: Complete MLflow experiment tracking
 
-## 🚀 Quick Start
+##  Quick Start
 
 ```bash
 # 1. Clone and setup
@@ -42,7 +42,7 @@ cp config/config.yaml config/my_config.yaml
 python main.py
 ```
 
-## 📊 Key Features
+##  Key Features
 
 ###  **Validation Strategies**
 - **Stratified 10-Fold CV**: Traditional approach (baseline)
@@ -162,7 +162,7 @@ validation:
   min_samples_per_class: 10    # Minimum for 10-fold
 ```
 
-## 📈 Usage Examples
+##  Usage Examples
 
 ### Basic Usage
 ```python
