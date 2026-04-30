@@ -328,11 +328,13 @@ If you use this pipeline in your research, please cite:
 
 ```bibtex
 @article{karbalaie2025subject,
-  title={Subject-Aware Model Validation for Repeated-Measures Data: A Nested Approach for Trustworthy Medical AI Applications},
+  title={Participant-Aware Model Validation for Repeated-Measures Data:
+Comparative Cross-Validation Study},
   author={Karbalaie, Abdolamir, Abtahi, Farhad and Häger, Charlotte K. },
-  journal={Journal Name},
-  year={2025},
-  note={Paper under review}
+  journal={JMIR AI },
+  year={2026},
+  URL={(https://ai.jmir.org/2026/1/e87728/)}
+  doi={10.2196/87728}
 }
 ```
 
